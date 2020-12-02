@@ -143,6 +143,24 @@ class FieldWithButtons(Div):
     template = "%s/layout/field_with_buttons.html"
     field_template = "%s/field.html"
 
+    def __init__(self, *args, **kwargs):
+        input_size = kwargs.pop('input_size', '')
+
+        self._input_size = ''
+        # Bootstrap 3
+        if "input-lg" in input_size:
+            self._input_size = "input-lg"
+        if "input-sm" in input_size:
+            self._input_size = "input-sm"
+
+        # Bootstrap 4
+        if "input-group-sm" in input_size:
+            self._input_size = "input-group-sm"
+        if "input-group-lg" in input_size:
+            self._input_size = "input-group-lg"
+
+        super().__init__(*args, **kwargs)
+
     def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, extra_context=None, **kwargs):
         # We first render the buttons
         field_template = self.field_template % template_pack
@@ -160,7 +178,8 @@ class FieldWithButtons(Div):
             for field in self.fields[1:]
         )
 
-        extra_context = {"div": self, "buttons": buttons}
+        extra_context = {"div": self, "buttons": buttons, "input_size": self._input_size}
+
         template = self.get_template_name(template_pack)
 
         if isinstance(self.fields[0], Field):
